@@ -1,0 +1,9 @@
+pdfs/
+.env
+.env.local
+.sites-runtime/
+__pycache__/
+.venv/
+build/
+release/
+*.spec

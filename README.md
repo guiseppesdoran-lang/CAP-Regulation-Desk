@@ -1,2 +1,57 @@
-# CAP-Regulation-Desk
-Standalone Civil Air Patrol question assistant with regulation citations, exact quotes, and conflict reporting.
+# CAP Regulation Desk
+
+A standalone Windows program for Civil Air Patrol questions. It starts its own local server and opens its question interface in your browser. ChatGPT and Codex do not need to be installed, open, or running.
+
+## Windows executable
+
+1. In this repository's **Actions** tab, open the latest successful **Build standalone Windows app** run.
+2. Download **CAP-Regulation-Desk-Windows**, extract the ZIP, and run **CAP-Regulation-Desk.exe**.
+3. Click **Configure API key** to save your own OpenAI API key locally, then **Open question bot**.
+4. Keep the desktop window open. Use the browser address it opens automatically.
+
+The executable includes Python and the publication library. AI answers require internet, an API key, and OpenAI API credits. Source research works offline. The app is standalone; its AI model is an online service rather than an offline model.
+
+## From source
+
+Install Python 3.12 or newer from python.org. On Windows, run **setup-windows.cmd** once, then **start-chatbot.cmd**. On other systems with Python and Tk:
+
+```sh
+python -m venv .venv
+# Activate the environment for your platform.
+python -m pip install -r requirements.txt
+python desktop.py
+```
+
+A console server is available with `python server.py --open-browser`. `OPENAI_API_KEY` can be supplied through the environment. `OPENAI_MODEL` defaults to `gpt-5-mini`.
+
+## Questions, citations, and conflicts
+
+Ask free-form CAP questions about uniforms, cadet programs, emergency services, flight operations, membership, administration, and other topics. Follow-ups retain the conversation. General informational questions are also supported. Select your wing when location matters: searches include national, selected-wing, and parent-region guidance. All-region mode supports comparisons.
+
+The app plans searches from the actual publication catalog, retrieves source pages and neighboring context, and requests a structured answer. Regulatory conclusions require quotations. Quotes and paragraph labels are checked against retrieved text. Citations link to original PDF pages. Conflict reports quote both provisions, explain the incompatible requirements, and identify where to seek guidance. Missing evidence is acknowledged rather than treated as permission or prohibition.
+
+The included snapshot contains **424 extracted PDFs and 4,816 pages**, collected October 6, 2026. It includes national publications, interim change letters, pamphlets, and approved region/wing indexes. Four Alaska Wing finance forms lacked extractable text. The snapshot does not guarantee complete or current authority: confirm dates, changes, approved supplements, and recertification in official publications. No chatbot can guarantee a correct answer to every question or conclusively resolve every conflict.
+
+## Keys and privacy
+
+No key is included in this repository or executable. Configuration saves a key to `%APPDATA%\CAPRegulationDesk\.env.local` on Windows, or the user configuration directory on other systems. Protect that file as a credential. The server binds only to loopback and blocks credential-file requests. Questions, recent conversation, context, the public catalog, and selected source passages are sent to OpenAI. Requests use `store: false`; provider data policies still apply.
+
+## Refresh publications
+
+In a source checkout, run **refresh-publications.cmd**, or `python collect_sources.py --refresh`, then restart the app. The collector redownloads official PDFs and updates the JSON and compressed libraries after extraction. Rebuild the executable to distribute a refreshed snapshot. A standalone executable uses its bundled snapshot unless a refreshed `corpus.json` is placed in its user configuration directory.
+
+## Build and test
+
+```sh
+python -m unittest test_server.py
+python -m pip install "pyinstaller>=6,<7"
+python build_executable.py
+```
+
+Output: `release/CAP-Regulation-Desk.exe`. GitHub Actions runs these tests and builds on Windows. The builder uses an explicit asset list and excludes credentials, cached PDFs, and personal configuration. Nineteen checks cover retrieval, geography, quotations, conflicts, simulated model responses, and local HTTP protections. Live model accuracy, connectivity, and billing/project access require separate verification.
+
+## Troubleshooting
+
+Use the address opened by the desktop app; it selects an available port. Close the app to stop its server. Exhausted API credits require billing or project-limit changes; a ChatGPT subscription does not include API credits. Network errors mean the app cannot reach OpenAI. `/api/health` reports library counts and configuration presence without exposing secrets.
+
+Independent research tool; not an official Civil Air Patrol service.
