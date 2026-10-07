@@ -6,7 +6,7 @@ A free static website for Civil Air Patrol publication questions. The website us
 
 **Current validation status:** the static build, regulation retrieval, wing filtering and citation checks pass. Browser-local AI loaded in the test browser, but sample generated answers failed verification and the test browser later stalled. AI answers remain experimental; this is not yet a verified replacement for the desktop answer engine. Invalid answers fall back to source passages. The worker implementation still needs a completed live browser test before release.
 
-Enable GitHub Pages with **GitHub Actions** as its source, then run **Publish free website**. The repository must be public for GitHub Free hosting. The workflow refuses to build in a private repository, and both workflows run manually to avoid accidental paid build usage.
+Enable GitHub Pages with **GitHub Actions** as its source, then run **Publish free website**. Website changes on main also deploy automatically. The repository must be public for GitHub Free hosting. The workflow refuses to build in a private repository; the legacy Windows build runs manually.
 
 The site downloads a snapshot of 428 publications, including national guidance and indexed region/wing supplements. Select your wing for scoped evidence or compare all jurisdictions. Source search works immediately. Click **Enable on-device AI** for free-form answers and follow-ups; this downloads a large Qwen2.5 1.5B model into the browser cache. A compatible WebGPU device and current Chrome or Edge are recommended. Inference runs on the visitor's device, with no paid API calls. Questions are not sent to an AI service; external hosts supply the library, JavaScript module and model files.
 

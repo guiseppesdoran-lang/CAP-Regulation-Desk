@@ -1,5 +1,14 @@
 name: Publish free website
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'corpus.json.gz'
+      - 'metadata.py'
+      - 'build_website.py'
+      - 'test_web.mjs'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
