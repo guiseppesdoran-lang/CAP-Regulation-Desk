@@ -1,8 +1,20 @@
 # CAP Regulation Desk
 
-A standalone Windows program for Civil Air Patrol questions. It starts its own local server and opens its question interface in your browser. ChatGPT and Codex do not need to be installed, open, or running.
+A free static website for Civil Air Patrol publication questions. The website uses GitHub Pages and an optional browser-local WebLLM model. No OpenAI account, API key, AI credits, subscription, or running desktop server is required for the website.
 
-## Windows executable
+## Free website
+
+Enable GitHub Pages with **GitHub Actions** as its source, then run **Publish free website**. The repository must be public for GitHub Free hosting. The workflow refuses to build in a private repository, and both workflows run manually to avoid accidental paid build usage.
+
+The site downloads a snapshot of 428 publications, including national guidance and indexed region/wing supplements. Select your wing for scoped evidence or compare all jurisdictions. Source search works immediately. Click **Enable on-device AI** for free-form answers and follow-ups; this downloads a large Qwen2.5 1.5B model into the browser cache. A compatible WebGPU device and current Chrome or Edge are recommended. Inference runs on the visitor's device, with no paid API calls. Questions are not sent to an AI service; external hosts supply the library, JavaScript module and model files.
+
+Answers verify quotations and paragraph identifiers against retrieved pages. Conflict answers require two distinct publication sources plus an explanation and guidance. Failed validation falls back to original passages. A small local model and a dated library cannot reliably answer every question, and verified quotes do not guarantee correct interpretation. Scanned/unavailable documents may have no searchable text. Confirm current requirements and changes with official publications and your chain of command.
+
+Build locally with `python build_website.py`, then serve `site/` with `python -m http.server 8899 --directory site`. Run browser logic checks with `node test_web.mjs`. Refresh the library with `python collect_sources.py --refresh`, commit the updated `corpus.json.gz`, then rerun the website workflow. Deployment copies only `web/` and public publication text; local credentials are excluded.
+
+Sources: [WebLLM documentation](https://webllm.mlc.ai/docs/user/basic_usage.html), [GitHub Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+## Legacy Windows executable (uses paid API credits)
 
 1. In this repository's **Actions** tab, open the latest successful **Build standalone Windows app** run.
 2. Download **CAP-Regulation-Desk-Windows**, extract the ZIP, and run **CAP-Regulation-Desk.exe**.

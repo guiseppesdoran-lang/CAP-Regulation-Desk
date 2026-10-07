@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {search,createIndex,validateAnswer,applies} from './web/retrieval.mjs';
+const doc={publication_id:'R39-1',scope:'national',url:'https://example.org/r39.pdf',pages:[{page:1,text:'4.1. The shirt must be light blue. Other colors are not authorized for this uniform.'}]};
+const sources=search(createIndex({documents:[doc]}),'pink shirt blues');
+assert.equal(sources.length,1);
+assert.equal(validateAnswer({status:'supported',answer:'Use a light blue shirt.',citations:[{source_id:'S1',locator:'4.1.',quote:'The shirt must be light blue.'}]},sources).citations.length,1);
+assert.throws(()=>validateAnswer({status:'supported',answer:'Yes.',citations:[{source_id:'S1',quote:'Pink shirts are allowed.'}]},sources));
+assert.throws(()=>validateAnswer({status:'supported',answer:'Yes.',citations:[]},sources));
+assert.throws(()=>validateAnswer({status:'conflict',answer:'Conflict.',citations:[{source_id:'S1',quote:'The shirt must be light blue.'}],conflict:'x',guidance:'Commander'},sources));
+assert.throws(()=>validateAnswer({status:'supported',answer:'No.',citations:[{source_id:'S1',locator:'99.1',quote:'The shirt must be light blue.'}]},sources));
+assert.equal(applies({scope:'PCR',region:'PCR'},'CAWG'),true);
+assert.equal(applies({scope:'TXWG',region:'SWR'},'CAWG'),false);
+assert.equal(applies({scope:'unknown-local'},'national'),false);
+console.log('Browser retrieval and evidence validation checks passed.');
