@@ -36,9 +36,9 @@ export function search(index, question, scope='all', limit=8) {
     const count=counts.get(item.doc.url)||0;
     if (count>=3) continue;
     counts.set(item.doc.url,count+1);
-    const positions=query.map(t=>item.lower.indexOf(t)).filter(p=>p>=0);
-    const start=Math.max(0,(positions.length ? Math.min(...positions) : 0)-180);
-    selected.push({...item,id:'S'+(selected.length+1),excerpt:item.text.slice(start,start+900)});
+    const paragraphs=item.text.split(/\n\s*\n/).filter(p=>p.trim().length>30);
+    const best=paragraphs.map(text=>({text,score:query.reduce((n,t)=>n+(text.toLowerCase().includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score)[0];
+    selected.push({...item,id:'S'+(selected.length+1),excerpt:(best?.text||item.text).trim().slice(0,750)});
     if(selected.length===limit) break;
   }
   return selected;
