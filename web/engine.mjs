@@ -106,10 +106,19 @@ export function answerQuestion(knowledge,question,scope='all',previous=''){
  let answer='These are the closest matching provisions. Read their conditions and exceptions before applying them; a text match alone does not establish a yes or no answer.';
  let result='evidence';
  if(/pink\b/i.test(query)&&/shirt/i.test(query)&&/blues|service uniform|service dress/i.test(query)){
-  const requirement=sources.find(s=>/39-1/.test(s.doc.publication_id||'')&&/light[\s-]*blue/i.test(s.excerpt)&&/shirt/i.test(s.excerpt));
+  const candidates=knowledge.records.filter(s=>/39-1/.test(s.doc.publication_id||'')&&s.doc.scope==='national'&&usable(s.doc)&&/light[\s-]*blue/i.test(s.block)&&/shirt/i.test(s.block));
+  candidates.sort((a,b)=>Number(/^4\.1\.11\.1\.1/.test(b.locator))-Number(/^4\.1\.11\.1\.1/.test(a.locator)));
+  let requirement=candidates[0];
+  if(requirement){
+   const position=requirement.block.search(/light[\s-]*blue/i);
+   const begin=Math.max(0,position-100);
+   const quote=requirement.block.slice(begin,Math.min(requirement.block.length,position+600)).trim();
+   requirement={...requirement,excerpt:quote,id:'RULE1'};
+  }
   if(requirement){
    answer='For the blues shirt described in the cited provision, a pink shirt does not meet the specified light-blue color requirement. Check that this provision describes your exact uniform variant.';
-   sources.splice(sources.indexOf(requirement),1);sources.unshift(requirement);result='supported';
+   const existing=sources.findIndex(s=>s.doc.url===requirement.doc.url&&s.page===requirement.page&&s.block===requirement.block);
+   if(existing>=0)sources.splice(existing,1);sources.unshift(requirement);if(sources.length>8)sources.pop();result='supported';
   }
  }
  const differences=possibleDifferences(sources);
