@@ -70,5 +70,6 @@ try {
   corpus=await response.json();index=createIndex(corpus);
   $('scope').replaceChildren(...corpus.scope_options.map(o=>{const option=document.createElement('option');option.value=o.value;option.textContent=o.label;return option;}));
   $('scope').value='all';
-  status(`${corpus.documents.length} publications · ${index.length} pages · Library checked ${corpus.checked_at}. Search is ready.`);lock(false);
+  status(`${corpus.documents.length} publications · ${index.length} pages · Library checked ${corpus.checked_at}. Starting built-in AI…`);lock(false);
+  await $('enable').onclick();
 }catch(error){status(error.message+' Reload the page to retry.');}
