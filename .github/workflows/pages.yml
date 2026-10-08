@@ -8,6 +8,7 @@ on:
       - 'metadata.py'
       - 'build_website.py'
       - 'test_web.mjs'
+      - 'test_engine.mjs'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
@@ -27,7 +28,9 @@ jobs:
         with:
           python-version: '3.12'
       - run: node test_web.mjs
+      - run: node test_engine.mjs
       - run: python build_website.py
+      - run: node test_engine.mjs --corpus
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

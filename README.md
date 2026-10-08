@@ -1,20 +1,24 @@
 # CAP Regulation Desk
 
-A free static website for Civil Air Patrol publication questions. The website uses GitHub Pages and an optional browser-local WebLLM model. No OpenAI account, API key, AI credits, subscription, or running desktop server is required for the website.
+An independent, self-contained Civil Air Patrol regulation assistant hosted on GitHub Pages. The website uses original JavaScript retrieval and a small deterministic rule engine. It requires no external AI backend, API key, credits, model download or WebGPU. There is no per-question service quota; browser resources and GitHub hosting limits still apply.
 
-## Free website
+## Website
 
-**Current validation status:** the static build, regulation retrieval, wing filtering and citation checks pass. Browser-local AI loaded in the test browser, but sample generated answers failed verification and the test browser later stalled. AI answers remain experimental; this is not yet a verified replacement for the desktop answer engine. Invalid answers fall back to source passages. The worker implementation still needs a completed live browser test before release.
+Ask a CAP question and select a wing or compare all jurisdictions. The app indexes its bundled publication snapshot, returns exact text with regulation, extracted paragraph number and PDF page, and links to the original publication. Only source text is quoted. Missing paragraph numbers are explicitly identified.
 
-Enable GitHub Pages with **GitHub Actions** as its source, then run **Publish free website**. Website changes on main also deploy automatically. The repository must be public for GitHub Free hosting. The workflow refuses to build in a private repository; the legacy Windows build runs manually.
+A supported built-in rule handles the pink-shirt/blues example when CAPR 39-1's retrieved text specifies a light-blue shirt. Other questions receive matching evidence rather than invented yes/no answers. Questions outside the corpus get a missing-evidence response. Follow-ups beginning with references such as 'what about' reuse the previous question.
 
-The site downloads a snapshot of 428 publications, including national guidance and indexed region/wing supplements. Select your wing for scoped evidence or compare all jurisdictions. Source search works immediately. Click **Enable on-device AI** for free-form answers and follow-ups; this downloads a large Qwen2.5 1.5B model into the browser cache. A compatible WebGPU device and current Chrome or Edge are recommended. Inference runs on the visitor's device, with no paid API calls. Questions are not sent to an AI service; external hosts supply the library, JavaScript module and model files.
+Opposite wording in different publications with the same scope is flagged as a potential discrepancy. The app quotes both passages and recommends appropriate command/functional guidance. It does not claim to resolve legal precedence, exceptions or real-world applicability automatically. Different wings are comparisons, not automatic conflicts. Obsolete/superseded/rescinded indexed sources are excluded from answer evidence. Index status and snapshot age remain visible; current authority must be verified.
 
-Answers verify quotations and paragraph identifiers against retrieved pages. Conflict answers require two distinct publication sources plus an explanation and guidance. Failed validation falls back to original passages. A small local model and a dated library cannot reliably answer every question, and verified quotes do not guarantee correct interpretation. Scanned/unavailable documents may have no searchable text. Confirm current requirements and changes with official publications and your chain of command.
+This is a deterministic research assistant, not a general-purpose language model. It does not reliably interpret every possible question or certify compliance. The bundled October 6, 2026 snapshot contains 428 documents; 424 have extracted PDF text. Scanned or unavailable text and subsequent changes can limit answers.
 
-Build locally with `python build_website.py`, then serve `site/` with `python -m http.server 8899 --directory site`. Run browser logic checks with `node test_web.mjs`. Refresh the library with `python collect_sources.py --refresh`, commit the updated `corpus.json.gz`, then rerun the website workflow. Deployment copies only `web/` and public publication text; local credentials are excluded.
+The website downloads its code and corpus from its own GitHub Pages origin. It makes no AI-service requests and has a same-origin content security policy. Clicking a source link opens the official external PDF. Questions and conversation context remain in browser memory; Clear conversation resets them. No personal question history is uploaded or retained by this app.
 
-Sources: [WebLLM documentation](https://webllm.mlc.ai/docs/user/basic_usage.html), [GitHub Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+## Build and deploy
+
+Set GitHub Pages Source to GitHub Actions. The Publish free website workflow deploys changes on main and can be run manually. Build with `python build_website.py`; test with `node test_web.mjs` and `node test_engine.mjs --corpus` after building. Serve locally with `python -m http.server 8899 --directory site`. Tests cover exact quotes, locators, unsupported conclusions, obsolete sources, scope, discrepancy candidates, and the actual snapshot's pink-shirt/cadet/flight searches.
+
+Refresh official publication data using `python collect_sources.py --refresh`, commit `corpus.json.gz`, and deploy again. The static artifact contains public text and website assets only. The legacy desktop app below is separate and uses paid API services.
 
 ## Legacy Windows executable (uses paid API credits)
 
